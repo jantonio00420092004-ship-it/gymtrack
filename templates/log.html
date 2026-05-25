@@ -1,0 +1,64 @@
+{% extends "base.html" %}
+{% set active = "log" %}
+
+{% block title %}Registrar — GymTrack{% endblock %}
+
+{% block content %}
+<div class="page-header">
+  <div>
+    <h1 class="page-title">Registrar entreno</h1>
+    <p class="page-subtitle" id="editingLabel"></p>
+  </div>
+</div>
+
+<div class="card">
+  <div class="form-row">
+    <div class="form-group">
+      <label class="form-label">Fecha</label>
+      <input type="date" id="sessionDate" class="form-input" value="{{ today }}" max="{{ today }}">
+    </div>
+    <div class="form-group">
+      <label class="form-label">Duración (min)</label>
+      <input type="number" id="sessionDuration" class="form-input" placeholder="60" min="1" max="300">
+    </div>
+  </div>
+  <div class="form-group">
+    <label class="form-label">Notas <span class="form-hint">(opcional)</span></label>
+    <textarea id="sessionNotes" class="form-input form-textarea" placeholder="Cómo te sentiste, PR nuevo..."></textarea>
+  </div>
+</div>
+
+<!-- Exercises -->
+<div id="exercisesList"></div>
+
+<button class="btn btn-outline btn-full" onclick="addExercise()">
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18" height="18">
+    <circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/>
+  </svg>
+  Añadir ejercicio
+</button>
+
+<div class="save-bar">
+  <button class="btn btn-primary btn-lg btn-full" id="saveBtn" onclick="saveSession()">Guardar sesión</button>
+  <p class="save-hint" id="saveHint"></p>
+</div>
+
+<datalist id="exercisesSuggestions">
+  {% for ex in exercises %}
+  <option value="{{ ex }}">
+  {% endfor %}
+</datalist>
+{% endblock %}
+
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/log.js') }}"></script>
+<script>
+  const EXERCISES_SUGGESTIONS = {{ exercises | tojson }};
+  const urlParams = new URLSearchParams(window.location.search);
+  const presetDate = urlParams.get('date');
+  if (presetDate) {
+    document.getElementById('sessionDate').value = presetDate;
+  }
+  initLogPage();
+</script>
+{% endblock %}

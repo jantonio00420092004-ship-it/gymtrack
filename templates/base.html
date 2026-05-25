@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <meta name="theme-color" content="#111111">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <title>{% block title %}GymTrack{% endblock %}</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap">
+  {% block head %}{% endblock %}
+</head>
+<body>
+
+  <aside class="sidebar">
+    <div class="sidebar-brand">
+      <span class="brand-icon">💪</span>
+      <span class="brand-name">GymTrack</span>
+    </div>
+    <nav class="sidebar-nav">
+      <a href="/" class="nav-item {% if active == 'home' %}active{% endif %}">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/>
+        </svg>
+        <span>Inicio</span>
+      </a>
+      <a href="/log" class="nav-item {% if active == 'log' %}active{% endif %}">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/>
+        </svg>
+        <span>Registrar</span>
+      </a>
+      <a href="/progress" class="nav-item {% if active == 'progress' %}active{% endif %}">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/>
+        </svg>
+        <span>Progreso</span>
+      </a>
+      <a href="/stats" class="nav-item {% if active == 'stats' %}active{% endif %}">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/>
+        </svg>
+        <span>Stats</span>
+      </a>
+    </nav>
+  </aside>
+
+  <main class="content">
+    {% block content %}{% endblock %}
+  </main>
+
+  <nav class="mobile-nav">
+    <a href="/" class="mobile-nav-item {% if active == 'home' %}active{% endif %}">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/>
+      </svg>
+      <span>Inicio</span>
+    </a>
+    <a href="/log" class="mobile-nav-item {% if active == 'log' %}active{% endif %}">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/>
+      </svg>
+      <span>Registrar</span>
+    </a>
+    <a href="/progress" class="mobile-nav-item {% if active == 'progress' %}active{% endif %}">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/>
+      </svg>
+      <span>Progreso</span>
+    </a>
+    <a href="/stats" class="mobile-nav-item {% if active == 'stats' %}active{% endif %}">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/>
+      </svg>
+      <span>Stats</span>
+    </a>
+  </nav>
+
+  <!-- Session detail modal -->
+  <div class="modal-overlay" id="sessionModal" onclick="closeModal()">
+    <div class="modal" onclick="event.stopPropagation()">
+      <div class="modal-header">
+        <h3 id="modalTitle">Sesión</h3>
+        <button class="modal-close" onclick="closeModal()">✕</button>
+      </div>
+      <div class="modal-body" id="modalBody"></div>
+      <div class="modal-footer">
+        <button class="btn btn-danger" id="modalDeleteBtn">Eliminar</button>
+        <a class="btn btn-secondary" id="modalEditBtn" href="#">Editar</a>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    function openSessionModal(id) {
+      fetch('/api/sessions/' + id)
+        .then(r => r.json())
+        .then(data => {
+          const s = data.session;
+          const dateStr = new Date(s.date + 'T12:00:00').toLocaleDateString('es-MX', {weekday:'long', year:'numeric', month:'long', day:'numeric'});
+          document.getElementById('modalTitle').textContent = dateStr;
+
+          let html = '';
+          if (s.duration_minutes) html += `<p class="modal-meta">⏱ ${s.duration_minutes} minutos</p>`;
+          if (s.notes) html += `<p class="modal-meta">📝 ${s.notes}</p>`;
+
+          data.exercises.forEach(ex => {
+            html += `<div class="modal-exercise"><h4>${ex.name}</h4><div class="modal-sets">`;
+            ex.sets.forEach(set => {
+              html += `<span class="set-chip">${set.reps ?? '–'} reps × ${set.weight ?? '–'} kg</span>`;
+            });
+            html += '</div></div>';
+          });
+
+          document.getElementById('modalBody').innerHTML = html;
+          document.getElementById('modalEditBtn').href = '/log?date=' + s.date;
+          document.getElementById('modalDeleteBtn').onclick = () => deleteSession(id);
+          document.getElementById('sessionModal').classList.add('open');
+        });
+    }
+
+    function closeModal() {
+      document.getElementById('sessionModal').classList.remove('open');
+    }
+
+    function deleteSession(id) {
+      if (!confirm('¿Eliminar esta sesión?')) return;
+      fetch('/api/sessions/' + id, {method: 'DELETE'})
+        .then(() => { closeModal(); location.reload(); });
+    }
+  </script>
+
+  {% block scripts %}{% endblock %}
+</body>
+</html>

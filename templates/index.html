@@ -1,0 +1,107 @@
+{% extends "base.html" %}
+{% set active = "home" %}
+
+{% block title %}Inicio — GymTrack{% endblock %}
+
+{% block content %}
+<div class="page-header">
+  <div>
+    <h1 class="page-title">Dashboard</h1>
+    <p class="page-subtitle" id="todayLabel"></p>
+  </div>
+  <a href="/log" class="btn btn-primary">+ Registrar</a>
+</div>
+
+<!-- Stats cards -->
+<div class="stats-grid">
+  <div class="stat-card">
+    <span class="stat-label">Total sesiones</span>
+    <span class="stat-value">{{ total_sessions }}</span>
+  </div>
+  <div class="stat-card accent">
+    <span class="stat-label">Este mes</span>
+    <span class="stat-value">{{ sessions_this_month }}</span>
+  </div>
+  <div class="stat-card">
+    <span class="stat-label">Racha actual</span>
+    <span class="stat-value">{{ streak }}<small> días</small></span>
+  </div>
+  <div class="stat-card">
+    <span class="stat-label">Volumen total</span>
+    <span class="stat-value">{{ "{:,}".format(total_volume) }}<small> kg</small></span>
+  </div>
+</div>
+
+<!-- Heatmap calendar -->
+<div class="card">
+  <h2 class="card-title">Actividad — últimos 4 meses</h2>
+  <div class="heatmap-container">
+    <div class="heatmap-labels">
+      <span>L</span><span>M</span><span>X</span><span>J</span><span>V</span><span>S</span><span>D</span>
+    </div>
+    <div class="heatmap">
+      {% for week in calendar %}
+      <div class="heatmap-col">
+        {% for day in week %}
+          {% if day %}
+            <div class="heatmap-day {% if day.trained %}trained{% endif %}" title="{{ day.date }}"></div>
+          {% else %}
+            <div class="heatmap-day empty"></div>
+          {% endif %}
+        {% endfor %}
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+  <div class="heatmap-legend">
+    <span>Menos</span>
+    <div class="legend-day"></div>
+    <div class="legend-day trained"></div>
+    <span>Más</span>
+  </div>
+</div>
+
+<!-- Recent sessions -->
+<div class="card">
+  <h2 class="card-title">Sesiones recientes</h2>
+  {% if sessions %}
+    <div class="session-list">
+      {% for s in sessions %}
+      <div class="session-item" onclick="openSessionModal({{ s.id }})">
+        <div class="session-date-block">
+          <span class="session-day">{{ s.date[8:] }}</span>
+          <span class="session-month">{{ s.date[5:7] }}/{{ s.date[:4] }}</span>
+        </div>
+        <div class="session-info">
+          <span class="session-exercises">{{ s.exercise_count }} ejercicio{% if s.exercise_count != 1 %}s{% endif %}</span>
+          {% if s.duration_minutes %}
+            <span class="session-meta">⏱ {{ s.duration_minutes }} min</span>
+          {% endif %}
+          {% if s.volume %}
+            <span class="session-meta">📦 {{ "{:,.0f}".format(s.volume) }} kg</span>
+          {% endif %}
+        </div>
+        <svg class="session-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <polyline points="9 18 15 12 9 6"/>
+        </svg>
+      </div>
+      {% endfor %}
+    </div>
+  {% else %}
+    <div class="empty-state">
+      <p>Aún no hay sesiones registradas.</p>
+      <a href="/log" class="btn btn-primary">Registrar mi primer entreno</a>
+    </div>
+  {% endif %}
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+  const months = ['Ene','Feb','Mar','Abr','May','Jun','Jul','Ago','Sep','Oct','Nov','Dic'];
+  const days = ['Dom','Lun','Mar','Mié','Jue','Vie','Sáb'];
+  const now = new Date();
+  document.getElementById('todayLabel').textContent =
+    days[now.getDay()] + ', ' + now.getDate() + ' de ' + months[now.getMonth()] + ' ' + now.getFullYear();
+</script>
+{% endblock %}

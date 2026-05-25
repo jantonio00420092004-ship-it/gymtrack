@@ -1,0 +1,88 @@
+{% extends "base.html" %}
+{% set active = "progress" %}
+
+{% block title %}Progreso — GymTrack{% endblock %}
+
+{% block head %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+{% endblock %}
+
+{% block content %}
+<div class="page-header">
+  <div>
+    <h1 class="page-title">Progreso</h1>
+    <p class="page-subtitle">Evolución de tus pesos</p>
+  </div>
+</div>
+
+{% if exercises %}
+<div class="card">
+  <div class="form-group">
+    <label class="form-label">Selecciona un ejercicio</label>
+    <select id="exerciseSelect" class="form-input form-select" onchange="loadProgress()">
+      <option value="">— Elige un ejercicio —</option>
+      {% for ex in exercises %}
+      <option value="{{ ex }}">{{ ex }}</option>
+      {% endfor %}
+    </select>
+  </div>
+</div>
+
+<div id="progressContent" style="display:none">
+  <!-- PR badge -->
+  <div class="pr-banner" id="prBanner">
+    <span class="pr-label">🏆 Récord personal</span>
+    <span class="pr-value" id="prValue"></span>
+  </div>
+
+  <!-- Max weight chart -->
+  <div class="card">
+    <h2 class="card-title">Peso máximo por sesión</h2>
+    <div class="chart-container">
+      <canvas id="weightChart"></canvas>
+    </div>
+  </div>
+
+  <!-- Volume chart -->
+  <div class="card">
+    <h2 class="card-title">Volumen por sesión <span class="card-hint">(kg × reps)</span></h2>
+    <div class="chart-container">
+      <canvas id="volumeChart"></canvas>
+    </div>
+  </div>
+
+  <!-- History table -->
+  <div class="card">
+    <h2 class="card-title">Historial</h2>
+    <div class="table-wrap">
+      <table class="data-table" id="historyTable">
+        <thead>
+          <tr>
+            <th>Fecha</th>
+            <th>Peso máx.</th>
+            <th>Series</th>
+            <th>Reps tot.</th>
+            <th>Volumen</th>
+          </tr>
+        </thead>
+        <tbody id="historyBody"></tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<div id="emptyProgress" class="card empty-state" style="display:none">
+  <p>Sin datos para este ejercicio todavía.</p>
+</div>
+
+{% else %}
+<div class="card empty-state">
+  <p>Registra tu primer entreno para ver el progreso aquí.</p>
+  <a href="/log" class="btn btn-primary">Registrar entreno</a>
+</div>
+{% endif %}
+{% endblock %}
+
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/progress.js') }}"></script>
+{% endblock %}
