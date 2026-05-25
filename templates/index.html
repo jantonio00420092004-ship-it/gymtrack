@@ -76,7 +76,9 @@
           <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
             <span class="session-exercises">{{ s.exercise_count }} ejercicio{% if s.exercise_count != 1 %}s{% endif %}</span>
             {% if s.muscle_group %}
-              <span class="muscle-tag">{{ s.muscle_group }}</span>
+              {% for m in s.muscle_group.split(', ') %}
+                <span class="muscle-tag">{{ m }}</span>
+              {% endfor %}
             {% endif %}
           </div>
           {% if s.duration_minutes %}

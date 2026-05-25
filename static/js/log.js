@@ -4,17 +4,12 @@ function initLogPage() {
   const dateInput = document.getElementById('sessionDate');
   dateInput.addEventListener('change', () => loadExistingSession(dateInput.value));
 
-  // Muscle chip selection
+  // Muscle chip selection (multi-select)
   document.querySelectorAll('.muscle-chip').forEach(chip => {
     chip.addEventListener('click', () => {
-      const active = chip.classList.contains('active');
-      document.querySelectorAll('.muscle-chip').forEach(c => c.classList.remove('active'));
-      if (!active) {
-        chip.classList.add('active');
-        document.getElementById('muscleGroup').value = chip.dataset.value;
-      } else {
-        document.getElementById('muscleGroup').value = '';
-      }
+      chip.classList.toggle('active');
+      const selected = [...document.querySelectorAll('.muscle-chip.active')].map(c => c.dataset.value);
+      document.getElementById('muscleGroup').value = selected.join(', ');
     });
   });
 
@@ -35,12 +30,13 @@ function loadExistingSession(dateStr) {
         document.getElementById('editingLabel').textContent = 'Editando sesión existente';
         document.getElementById('saveBtn').textContent = 'Actualizar sesión';
 
-        // Restore muscle chip
+        // Restore muscle chips (multi)
         document.querySelectorAll('.muscle-chip').forEach(c => c.classList.remove('active'));
         document.getElementById('muscleGroup').value = s.muscle_group || '';
         if (s.muscle_group) {
+          const saved = s.muscle_group.split(', ');
           document.querySelectorAll('.muscle-chip').forEach(c => {
-            if (c.dataset.value === s.muscle_group) c.classList.add('active');
+            if (saved.includes(c.dataset.value)) c.classList.add('active');
           });
         }
 
