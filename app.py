@@ -24,6 +24,7 @@ def init_db():
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             date TEXT NOT NULL UNIQUE,
             duration_minutes INTEGER,
+            muscle_group TEXT,
             notes TEXT,
             created_at TEXT DEFAULT (datetime('now'))
         );
@@ -37,6 +38,12 @@ def init_db():
             FOREIGN KEY (session_id) REFERENCES sessions(id) ON DELETE CASCADE
         );
     ''')
+    # Migration: add muscle_group if it doesn't exist yet
+    try:
+        conn.execute('ALTER TABLE sessions ADD COLUMN muscle_group TEXT')
+        conn.commit()
+    except Exception:
+        pass
     conn.commit()
     conn.close()
 
@@ -73,7 +80,7 @@ def index():
     db = get_db()
 
     sessions = db.execute('''
-        SELECT s.id, s.date, s.duration_minutes,
+        SELECT s.id, s.date, s.duration_minutes, s.muscle_group,
                COUNT(DISTINCT e.exercise) as exercise_count,
                COALESCE(ROUND(SUM(e.weight_kg * e.reps), 0), 0) as volume
         FROM sessions s
@@ -195,13 +202,13 @@ def save_session():
         existing = db.execute('SELECT id FROM sessions WHERE date=?', (data['date'],)).fetchone()
         if existing:
             session_id = existing['id']
-            db.execute('UPDATE sessions SET duration_minutes=?, notes=? WHERE id=?',
-                       (data.get('duration'), data.get('notes', ''), session_id))
+            db.execute('UPDATE sessions SET duration_minutes=?, muscle_group=?, notes=? WHERE id=?',
+                       (data.get('duration'), data.get('muscle_group'), data.get('notes', ''), session_id))
             db.execute('DELETE FROM entries WHERE session_id=?', (session_id,))
         else:
             cur = db.execute(
-                'INSERT INTO sessions (date, duration_minutes, notes) VALUES (?,?,?)',
-                (data['date'], data.get('duration'), data.get('notes', ''))
+                'INSERT INTO sessions (date, duration_minutes, muscle_group, notes) VALUES (?,?,?,?)',
+                (data['date'], data.get('duration'), data.get('muscle_group'), data.get('notes', ''))
             )
             session_id = cur.lastrowid
 

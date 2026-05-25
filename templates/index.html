@@ -73,7 +73,12 @@
           <span class="session-month">{{ s.date[5:7] }}/{{ s.date[:4] }}</span>
         </div>
         <div class="session-info">
-          <span class="session-exercises">{{ s.exercise_count }} ejercicio{% if s.exercise_count != 1 %}s{% endif %}</span>
+          <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
+            <span class="session-exercises">{{ s.exercise_count }} ejercicio{% if s.exercise_count != 1 %}s{% endif %}</span>
+            {% if s.muscle_group %}
+              <span class="muscle-tag">{{ s.muscle_group }}</span>
+            {% endif %}
+          </div>
           {% if s.duration_minutes %}
             <span class="session-meta">⏱ {{ s.duration_minutes }} min</span>
           {% endif %}

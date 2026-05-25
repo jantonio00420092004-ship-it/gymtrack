@@ -3,6 +3,21 @@ let exerciseCount = 0;
 function initLogPage() {
   const dateInput = document.getElementById('sessionDate');
   dateInput.addEventListener('change', () => loadExistingSession(dateInput.value));
+
+  // Muscle chip selection
+  document.querySelectorAll('.muscle-chip').forEach(chip => {
+    chip.addEventListener('click', () => {
+      const active = chip.classList.contains('active');
+      document.querySelectorAll('.muscle-chip').forEach(c => c.classList.remove('active'));
+      if (!active) {
+        chip.classList.add('active');
+        document.getElementById('muscleGroup').value = chip.dataset.value;
+      } else {
+        document.getElementById('muscleGroup').value = '';
+      }
+    });
+  });
+
   loadExistingSession(dateInput.value);
 }
 
@@ -19,6 +34,15 @@ function loadExistingSession(dateStr) {
         document.getElementById('sessionNotes').value = s.notes || '';
         document.getElementById('editingLabel').textContent = 'Editando sesión existente';
         document.getElementById('saveBtn').textContent = 'Actualizar sesión';
+
+        // Restore muscle chip
+        document.querySelectorAll('.muscle-chip').forEach(c => c.classList.remove('active'));
+        document.getElementById('muscleGroup').value = s.muscle_group || '';
+        if (s.muscle_group) {
+          document.querySelectorAll('.muscle-chip').forEach(c => {
+            if (c.dataset.value === s.muscle_group) c.classList.add('active');
+          });
+        }
 
         if (data.exercises && data.exercises.length) {
           data.exercises.forEach(ex => {
@@ -154,7 +178,7 @@ function saveSession() {
   fetch('/api/sessions', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ date, duration: duration ? parseInt(duration) : null, notes, entries })
+    body: JSON.stringify({ date, duration: duration ? parseInt(duration) : null, muscle_group: document.getElementById('muscleGroup').value || null, notes, entries })
   })
     .then(r => r.json())
     .then(data => {
