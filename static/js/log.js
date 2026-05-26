@@ -67,6 +67,46 @@ function resumeTimerIfRunning() {
   }
 }
 
+// ── Superset ─────────────────────────────────────────────────────────────────
+let supersetCounter = 0;
+
+function toggleSuperset(btn) {
+  const block = btn.closest('.exercise-block');
+  const allBlocks = [...document.querySelectorAll('.exercise-block')];
+  const idx = allBlocks.indexOf(block);
+  const nextBlock = allBlocks[idx + 1];
+
+  if (!nextBlock) {
+    alert('Agrega el segundo ejercicio debajo primero');
+    return;
+  }
+
+  const currentGroup = block.dataset.supersetGroup;
+
+  if (currentGroup) {
+    // Desagrupar
+    [block, nextBlock].forEach(b => {
+      if (b.dataset.supersetGroup === currentGroup) {
+        delete b.dataset.supersetGroup;
+        b.classList.remove('superset-member', 'superset-first', 'superset-last');
+        const sbtn = b.querySelector('.superset-btn');
+        if (sbtn) { sbtn.textContent = '🔗 Biserie'; sbtn.classList.remove('active'); }
+      }
+    });
+  } else {
+    // Agrupar
+    const letter = String.fromCharCode(65 + (supersetCounter++ % 26));
+    block.dataset.supersetGroup = letter;
+    nextBlock.dataset.supersetGroup = letter;
+    block.classList.add('superset-member', 'superset-first');
+    nextBlock.classList.add('superset-member', 'superset-last');
+    const b1 = block.querySelector('.superset-btn');
+    const b2 = nextBlock.querySelector('.superset-btn');
+    if (b1) { b1.textContent = `🔗 Biserie`; b1.classList.add('active'); }
+    if (b2) { b2.textContent = `🔗 Biserie`; b2.classList.add('active'); }
+  }
+}
+
 // ── Exercises ────────────────────────────────────────────────────────────────
 let exerciseCount = 0;
 
@@ -110,15 +150,34 @@ function loadExistingSession(dateStr) {
         }
 
         if (data.exercises && data.exercises.length) {
+          // Build exercise blocks
           data.exercises.forEach(ex => {
             const block = addExercise();
             block.querySelector('.exercise-name').value = ex.name;
+            if (ex.superset_group) block.dataset.supersetGroup = ex.superset_group;
             const setsContainer = block.querySelector('.sets-container');
             setsContainer.innerHTML = '';
             ex.sets.forEach((s, i) => {
               setsContainer.appendChild(createSetRow(i + 1, s.reps, s.weight));
             });
             updateOneRM(block);
+          });
+          // Restore superset visuals
+          const allBlocks = [...document.querySelectorAll('.exercise-block')];
+          const groups = {};
+          allBlocks.forEach(b => {
+            const g = b.dataset.supersetGroup;
+            if (g) { if (!groups[g]) groups[g] = []; groups[g].push(b); }
+          });
+          Object.values(groups).forEach(pair => {
+            if (pair.length >= 2) {
+              pair[0].classList.add('superset-member', 'superset-first');
+              pair[1].classList.add('superset-member', 'superset-last');
+              pair.forEach(b => {
+                const sbtn = b.querySelector('.superset-btn');
+                if (sbtn) sbtn.classList.add('active');
+              });
+            }
           });
         } else {
           addExercise();
@@ -148,6 +207,7 @@ function addExercise(name = '') {
       <input type="text" class="form-input exercise-name" placeholder="Ejercicio (ej: Press de banca)"
              list="exercisesSuggestions" autocomplete="off" value="${name}"
              oninput="updateOneRM(this.closest('.exercise-block'))">
+      <button class="superset-btn" onclick="toggleSuperset(this)">🔗 Biserie</button>
       <button class="btn-icon" onclick="removeExercise(this)" title="Eliminar ejercicio">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16">
           <polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 01-2 2H8a2 2 0 01-2-2L5 6"/>
@@ -319,7 +379,7 @@ function saveSession() {
         });
       }
     }
-    if (sets.length) entries.push({ exercise: exerciseName, sets });
+    if (sets.length) entries.push({ exercise: exerciseName, superset_group: block.dataset.supersetGroup || null, sets });
   }
 
   if (!entries.length) { alert('Agrega al menos un ejercicio con datos'); return; }

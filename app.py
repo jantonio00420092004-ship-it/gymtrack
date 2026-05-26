@@ -35,6 +35,7 @@ def init_db():
             set_number INTEGER NOT NULL,
             reps INTEGER,
             weight_lbs REAL,
+            superset_group TEXT,
             FOREIGN KEY (session_id) REFERENCES sessions(id) ON DELETE CASCADE
         );
         CREATE TABLE IF NOT EXISTS routines (
@@ -54,6 +55,7 @@ def init_db():
     for col_sql in [
         'ALTER TABLE sessions ADD COLUMN muscle_group TEXT',
         'ALTER TABLE entries ADD COLUMN weight_lbs REAL',
+        'ALTER TABLE entries ADD COLUMN superset_group TEXT',
     ]:
         try:
             conn.execute(col_sql)
@@ -245,8 +247,8 @@ def save_session():
                 weight = s.get('weight')
                 if reps or weight:
                     db.execute(
-                        'INSERT INTO entries (session_id, exercise, set_number, reps, weight_lbs) VALUES (?,?,?,?,?)',
-                        (session_id, name, i, reps, weight)
+                        'INSERT INTO entries (session_id, exercise, set_number, reps, weight_lbs, superset_group) VALUES (?,?,?,?,?,?)',
+                        (session_id, name, i, reps, weight, ex.get('superset_group'))
                     )
 
         db.commit()
@@ -275,12 +277,12 @@ def get_session_by_date(date_str):
     for e in entries:
         name = e['exercise']
         if name not in ex_map:
-            ex_map[name] = []
-        ex_map[name].append({'set': e['set_number'], 'reps': e['reps'], 'weight': e['weight_lbs']})
+            ex_map[name] = {'sets': [], 'superset_group': e['superset_group']}
+        ex_map[name]['sets'].append({'set': e['set_number'], 'reps': e['reps'], 'weight': e['weight_lbs']})
 
     return jsonify({
         'session': dict(session),
-        'exercises': [{'name': k, 'sets': v} for k, v in ex_map.items()]
+        'exercises': [{'name': k, 'sets': v['sets'], 'superset_group': v['superset_group']} for k, v in ex_map.items()]
     })
 
 
@@ -301,12 +303,12 @@ def get_session(sid):
     for e in entries:
         name = e['exercise']
         if name not in ex_map:
-            ex_map[name] = []
-        ex_map[name].append({'set': e['set_number'], 'reps': e['reps'], 'weight': e['weight_lbs']})
+            ex_map[name] = {'sets': [], 'superset_group': e['superset_group']}
+        ex_map[name]['sets'].append({'set': e['set_number'], 'reps': e['reps'], 'weight': e['weight_lbs']})
 
     return jsonify({
         'session': dict(session),
-        'exercises': [{'name': k, 'sets': v} for k, v in ex_map.items()]
+        'exercises': [{'name': k, 'sets': v['sets'], 'superset_group': v['superset_group']} for k, v in ex_map.items()]
     })
 
 
