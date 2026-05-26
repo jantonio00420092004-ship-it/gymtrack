@@ -8,7 +8,8 @@
   <title>{% block title %}GymTrack{% endblock %}</title>
   <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
   <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap">
+  <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
   {% block head %}{% endblock %}
 </head>
 <body>
@@ -20,27 +21,19 @@
     </div>
     <nav class="sidebar-nav">
       <a href="/" class="nav-item {% if active == 'home' %}active{% endif %}">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-          <path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/>
-        </svg>
+        <i data-lucide="home" style="width:16px;height:16px;stroke-width:1.5"></i>
         <span>Inicio</span>
       </a>
       <a href="/log" class="nav-item {% if active == 'log' %}active{% endif %}">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-          <circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/>
-        </svg>
+        <i data-lucide="plus-circle" style="width:16px;height:16px;stroke-width:1.5"></i>
         <span>Registrar</span>
       </a>
       <a href="/progress" class="nav-item {% if active == 'progress' %}active{% endif %}">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-          <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/>
-        </svg>
+        <i data-lucide="trending-up" style="width:16px;height:16px;stroke-width:1.5"></i>
         <span>Progreso</span>
       </a>
       <a href="/stats" class="nav-item {% if active == 'stats' %}active{% endif %}">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-          <line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/>
-        </svg>
+        <i data-lucide="bar-chart-2" style="width:16px;height:16px;stroke-width:1.5"></i>
         <span>Stats</span>
       </a>
     </nav>
@@ -52,27 +45,19 @@
 
   <nav class="mobile-nav">
     <a href="/" class="mobile-nav-item {% if active == 'home' %}active{% endif %}">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-        <path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/>
-      </svg>
+      <i data-lucide="home" style="width:20px;height:20px;stroke-width:1.5"></i>
       <span>Inicio</span>
     </a>
     <a href="/log" class="mobile-nav-item {% if active == 'log' %}active{% endif %}">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-        <circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/>
-      </svg>
+      <i data-lucide="plus-circle" style="width:20px;height:20px;stroke-width:1.5"></i>
       <span>Registrar</span>
     </a>
     <a href="/progress" class="mobile-nav-item {% if active == 'progress' %}active{% endif %}">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-        <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/>
-      </svg>
+      <i data-lucide="trending-up" style="width:20px;height:20px;stroke-width:1.5"></i>
       <span>Progreso</span>
     </a>
     <a href="/stats" class="mobile-nav-item {% if active == 'stats' %}active{% endif %}">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-        <line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/>
-      </svg>
+      <i data-lucide="bar-chart-2" style="width:20px;height:20px;stroke-width:1.5"></i>
       <span>Stats</span>
     </a>
   </nav>
@@ -132,5 +117,6 @@
   </script>
 
   {% block scripts %}{% endblock %}
+  <script>lucide.createIcons();</script>
 </body>
 </html>
