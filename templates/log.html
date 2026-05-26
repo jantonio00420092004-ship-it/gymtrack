@@ -11,6 +11,16 @@
   </div>
 </div>
 
+<!-- Timer -->
+<div class="timer-card" id="timerCard">
+  <div class="timer-display" id="timerDisplay">00:00:00</div>
+  <div class="timer-actions">
+    <button class="btn btn-primary btn-lg" id="timerBtn" onclick="toggleTimer()">▶ Iniciar Entreno</button>
+  </div>
+  <p class="timer-hint" id="timerHint">Presiona para empezar a contar el tiempo</p>
+</div>
+
+<!-- Session info -->
 <div class="card">
   <div class="form-row">
     <div class="form-group">
@@ -19,7 +29,7 @@
     </div>
     <div class="form-group">
       <label class="form-label">Duración (min)</label>
-      <input type="number" id="sessionDuration" class="form-input" placeholder="60" min="1" max="300">
+      <input type="number" id="sessionDuration" class="form-input" placeholder="Auto con timer" min="1" max="600">
     </div>
   </div>
   <div class="form-group">
@@ -43,6 +53,22 @@
   </div>
 </div>
 
+<!-- Routine loader -->
+{% if routines %}
+<div class="card">
+  <h2 class="card-title">Cargar rutina guardada</h2>
+  <div class="routine-row">
+    <select id="routineSelect" class="form-input form-select" style="flex:1">
+      <option value="">— Selecciona una rutina —</option>
+      {% for r in routines %}
+      <option value="{{ r.id }}">{{ r.name }}</option>
+      {% endfor %}
+    </select>
+    <button class="btn btn-secondary" onclick="loadRoutine()">Cargar</button>
+  </div>
+</div>
+{% endif %}
+
 <!-- Exercises -->
 <div id="exercisesList"></div>
 
@@ -51,6 +77,16 @@
     <circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/>
   </svg>
   Añadir ejercicio
+</button>
+
+<!-- Save routine -->
+<div class="save-routine-row" id="saveRoutineRow" style="display:none">
+  <input type="text" id="routineName" class="form-input" placeholder="Nombre de la rutina (ej: Push Day A)">
+  <button class="btn btn-secondary" onclick="saveRoutine()">Guardar</button>
+  <button class="btn btn-icon" onclick="document.getElementById('saveRoutineRow').style.display='none'">✕</button>
+</div>
+<button class="btn btn-outline btn-full" id="showSaveRoutineBtn" onclick="showSaveRoutine()" style="margin-bottom:8px">
+  💾 Guardar como rutina
 </button>
 
 <div class="save-bar">
@@ -71,9 +107,7 @@
   const EXERCISES_SUGGESTIONS = {{ exercises | tojson }};
   const urlParams = new URLSearchParams(window.location.search);
   const presetDate = urlParams.get('date');
-  if (presetDate) {
-    document.getElementById('sessionDate').value = presetDate;
-  }
+  if (presetDate) document.getElementById('sessionDate').value = presetDate;
   initLogPage();
 </script>
 {% endblock %}

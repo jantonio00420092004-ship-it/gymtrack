@@ -48,9 +48,11 @@ function loadProgress() {
       const weights = data.map(d => d.max_weight);
       const volumes = data.map(d => d.volume);
 
-      // PR badge
+      // PR badge (max 1RM)
+      const oneRMs = data.map(d => d.est_1rm).filter(v => v != null);
       const pr = Math.max(...weights.filter(w => w != null));
-      document.getElementById('prValue').textContent = pr + ' kg';
+      const pr1rm = oneRMs.length ? Math.max(...oneRMs) : null;
+      document.getElementById('prValue').textContent = pr + ' lbs' + (pr1rm ? `  |  1RM est. ${pr1rm} lbs` : '');
 
       // Weight chart
       if (weightChart) weightChart.destroy();
@@ -132,10 +134,11 @@ function loadProgress() {
       tbody.innerHTML = [...data].reverse().map(d => `
         <tr>
           <td>${d.date}</td>
-          <td class="accent-text">${d.max_weight ?? '—'} kg</td>
+          <td class="accent-text">${d.max_weight ?? '—'} lbs</td>
+          <td>${d.est_1rm ? `<span style="color:#fbbf24;font-weight:700">${d.est_1rm} lbs</span>` : '—'}</td>
           <td>${d.total_sets ?? '—'}</td>
           <td>${d.total_reps ?? '—'}</td>
-          <td>${d.volume ?? '—'} kg</td>
+          <td>${d.volume ?? '—'} lbs</td>
         </tr>
       `).join('');
     });

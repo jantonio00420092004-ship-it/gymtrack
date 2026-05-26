@@ -23,7 +23,7 @@
   </div>
   <div class="stat-card">
     <span class="stat-label">Volumen total</span>
-    <span class="stat-value">{{ "{:,}".format(total_volume) }}<small> kg</small></span>
+    <span class="stat-value">{{ "{:,}".format(total_volume) }}<small> lbs</small></span>
   </div>
   <div class="stat-card">
     <span class="stat-label">Duración promedio</span>
@@ -91,7 +91,7 @@
         {% for r in records %}
         <tr>
           <td>{{ r.exercise }}</td>
-          <td class="accent-text">{{ r.max_weight }} kg</td>
+          <td class="accent-text">{{ r.max_weight }} lbs</td>
           <td>{{ r.record_date }}</td>
         </tr>
         {% endfor %}
