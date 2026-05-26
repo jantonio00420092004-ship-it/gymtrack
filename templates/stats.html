@@ -18,18 +18,22 @@
 <!-- Overview stats -->
 <div class="stats-grid stats-grid-4">
   <div class="stat-card accent">
+    <div class="stat-icon accent"><i data-lucide="calendar-check" style="width:15px;height:15px;stroke-width:1.5"></i></div>
     <span class="stat-label">Sesiones totales</span>
     <span class="stat-value">{{ total_sessions }}</span>
   </div>
   <div class="stat-card">
+    <div class="stat-icon"><i data-lucide="dumbbell" style="width:15px;height:15px;stroke-width:1.5"></i></div>
     <span class="stat-label">Volumen total</span>
     <span class="stat-value">{{ "{:,}".format(total_volume) }}<small> lbs</small></span>
   </div>
   <div class="stat-card">
+    <div class="stat-icon"><i data-lucide="timer" style="width:15px;height:15px;stroke-width:1.5"></i></div>
     <span class="stat-label">Duración promedio</span>
     <span class="stat-value">{{ avg_duration }}<small> min</small></span>
   </div>
   <div class="stat-card">
+    <div class="stat-icon"><i data-lucide="layers" style="width:15px;height:15px;stroke-width:1.5"></i></div>
     <span class="stat-label">Ejercicios distintos</span>
     <span class="stat-value">{{ total_exercises }}</span>
   </div>
@@ -55,7 +59,7 @@
         <tr>
           <th>Ejercicio</th>
           <th>Sesiones</th>
-          <th>PR (kg)</th>
+          <th>PR (lbs)</th>
           <th>Reps totales</th>
         </tr>
       </thead>
