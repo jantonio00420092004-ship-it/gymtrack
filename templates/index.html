@@ -15,20 +15,24 @@
 <!-- Stats cards -->
 <div class="stats-grid">
   <div class="stat-card">
+    <div class="stat-icon"><i data-lucide="calendar" style="width:16px;height:16px;stroke-width:1.5"></i></div>
     <span class="stat-label">Total sesiones</span>
     <span class="stat-value">{{ total_sessions }}</span>
   </div>
   <div class="stat-card accent">
+    <div class="stat-icon accent"><i data-lucide="zap" style="width:16px;height:16px;stroke-width:1.5"></i></div>
     <span class="stat-label">Este mes</span>
     <span class="stat-value">{{ sessions_this_month }}</span>
   </div>
   <div class="stat-card">
+    <div class="stat-icon"><i data-lucide="flame" style="width:16px;height:16px;stroke-width:1.5"></i></div>
     <span class="stat-label">Racha actual</span>
     <span class="stat-value">{{ streak }}<small> días</small></span>
   </div>
   <div class="stat-card">
+    <div class="stat-icon"><i data-lucide="dumbbell" style="width:16px;height:16px;stroke-width:1.5"></i></div>
     <span class="stat-label">Volumen total</span>
-    <span class="stat-value">{{ "{:,}".format(total_volume) }}<small> kg</small></span>
+    <span class="stat-value">{{ "{:,}".format(total_volume) }}<small> lbs</small></span>
   </div>
 </div>
 
