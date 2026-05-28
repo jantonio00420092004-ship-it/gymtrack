@@ -37,8 +37,16 @@ if DATABASE_URL:
     DB_MODE = 'pg'
 else:
     import sqlite3
-    DATABASE = os.environ.get('DATABASE_PATH',
-                              os.path.join(os.path.dirname(os.path.abspath(__file__)), 'workout.db'))
+    _app_dir = os.path.dirname(os.path.abspath(__file__))
+    _configured = os.environ.get('DATABASE_PATH', os.path.join(_app_dir, 'workout.db'))
+    # Verify the configured directory is writable; fall back to app dir if not
+    _db_dir = os.path.dirname(_configured)
+    try:
+        if _db_dir:
+            os.makedirs(_db_dir, exist_ok=True)
+        DATABASE = _configured
+    except (PermissionError, OSError):
+        DATABASE = os.path.join(_app_dir, 'workout.db')
 
     def get_db():
         conn = sqlite3.connect(DATABASE)
@@ -117,9 +125,7 @@ def sql_like_month(col, month):
 
 def init_db():
     if DB_MODE == 'sqlite':
-        db_dir = os.path.dirname(DATABASE)
-        if db_dir:
-            os.makedirs(db_dir, exist_ok=True)
+        pass  # Directory already created/verified at module load
 
     conn = get_db()
 
