@@ -94,11 +94,23 @@
   <p class="save-hint" id="saveHint"></p>
 </div>
 
-<datalist id="exercisesSuggestions">
-  {% for ex in exercises %}
-  <option value="{{ ex }}">
-  {% endfor %}
-</datalist>
+<!-- ── Exercise picker modal ────────────────────────────────────────── -->
+<div class="picker-overlay" id="exercisePickerOverlay">
+  <div class="picker-sheet">
+    <div class="picker-handle"></div>
+    <div class="picker-header">
+      <h3 class="picker-title">Selecciona un ejercicio</h3>
+      <button class="modal-close" onclick="closeExercisePicker()">✕</button>
+    </div>
+    <div class="picker-search-wrap">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="16" height="16" class="picker-search-icon">
+        <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
+      </svg>
+      <input type="text" id="pickerSearch" class="picker-search" placeholder="Buscar ejercicio…" autocomplete="off">
+    </div>
+    <div class="picker-body" id="pickerGroups"></div>
+  </div>
+</div>
 {% endblock %}
 
 {% block scripts %}
